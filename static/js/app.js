@@ -32,30 +32,15 @@ d3.json("static/data/samples.json").then((data) => {
         cell2.text(value);
         }); 
 
-    // Reformat data of interest for use in plotting
-    var otuData = [];
-    var otuIds = filteredsampleData[0].otu_ids;
-    var otuLabels = filteredsampleData[0].otu_labels;
-    var sampleValues = filteredsampleData[0].sample_values;
-
-    for (let i = 0; i < otuIds.length; i++) {
-        var otuDatapoint = {};
-        otuDatapoint['id'] = otuIds[i];
-        otuDatapoint['label'] = otuLabels[i];
-        otuDatapoint['value'] = sampleValues[i];
-        otuData.push(otuDatapoint);
-    }
-
-    // Sort data, pull out top ten results and reverse order
-    var sortedotuData = otuData.sort((a, b) => b.value - a.value);
-    var topTen = sortedotuData.slice(0, 10).reverse();
+    // Sort data by sample values
+    var sortedotuData = filteredsampleData.sort((a, b) => b.sample_values - a.sample_values);
 
     // Generate horizontal bar chart of top ten OTU's
     // Create trace
     var topTrace = {
-        y: topTen.map(otu => `OTU ${otu.id}`),
-        x: topTen.map(otu => otu.value),
-        text: topTen.map(otu => otu.label),
+        y: sortedotuData[0].otu_ids.slice(0, 10).reverse().map(otu => `OTU ${otu}`),
+        x: sortedotuData[0].sample_values.slice(0, 10).reverse(),
+        text: sortedotuData[0].otu_labels.slice(0, 10).reverse(),
         type: 'bar', 
         orientation: 'h'
     };
@@ -72,13 +57,13 @@ d3.json("static/data/samples.json").then((data) => {
     // Generate bubble chart
     // Create trace
     var bubbleTrace = {
-        y: otuData.map(otu => otu.value),
-        x: otuData.map(otu => otu.id),
-        text: otuData.map(otu => otu.label),
+        y: sortedotuData[0].sample_values,
+        x: sortedotuData[0].otu_ids,
+        text: sortedotuData[0].otu_labels,
         mode: 'markers',
         marker: {
-            color: otuData.map(otu => otu.id),
-            size: otuData.map(otu => otu.value)
+            color: sortedotuData[0].otu_ids,
+            size: sortedotuData[0].sample_values
         }
     };
     // Create layout
