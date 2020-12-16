@@ -32,9 +32,7 @@ d3.json("static/data/samples.json").then((data) => {
         cell2.text(value);
         }); 
 
-    // Generate horizontal bar chart
-    // Sort by OTU values and pull out top 10
-    // Reformat data of interest in order to sort it
+    // Reformat data of interest for use in plotting
     var otuData = [];
     var otuIds = filteredsampleData[0].otu_ids;
     var otuLabels = filteredsampleData[0].otu_labels;
@@ -51,18 +49,47 @@ d3.json("static/data/samples.json").then((data) => {
     // Sort data, pull out top ten results and reverse order
     var sortedotuData = otuData.sort((a, b) => b.value - a.value);
     var topTen = sortedotuData.slice(0, 10).reverse();
-    console.log(topTen)
 
+    // Generate horizontal bar chart of top ten OTU's
     // Create trace
+    var topTrace = {
+        y: topTen.map(otu => `OTU ${otu.id}`),
+        x: topTen.map(otu => otu.value),
+        text: topTen.map(otu => otu.label),
+        type: 'bar', 
+        orientation: 'h'
+    };
 
     // Create layout
+    var topLayout = {
+        title: `Top Ten OTU's in Sample ${inputValue}`,
+        xaxis: { title: "Number of Samples Found"}
+    };
 
     // Generate plot
-
-
+    Plotly.newPlot('bar', [topTrace], topLayout);
 
     // Generate bubble chart
-
+    // Create trace
+    var bubbleTrace = {
+        y: otuData.map(otu => otu.value),
+        x: otuData.map(otu => otu.id),
+        text: otuData.map(otu => otu.label),
+        mode: 'markers',
+        marker: {
+            color: otuData.map(otu => otu.id),
+            size: otuData.map(otu => otu.value)
+        }
+    };
+    // Create layout
+    var layout = {
+        title: `All OTUs in Sample ${inputValue}`,
+        showlegend: false,
+        xaxis: { title: 'OTU ID' },
+        yaxis: { title: 'Number of Samples Found' }
+    };
+    // Generate plot
+    Plotly.newPlot('bubble', [bubbleTrace], layout);
 
     // Generate gauge chart
 
