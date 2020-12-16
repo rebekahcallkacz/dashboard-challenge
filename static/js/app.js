@@ -12,6 +12,7 @@ d3.json("static/data/samples.json").then((data) => {
         dropdownOptions.append('option').text(`${name}`).property('value', `${name}`);
     });
 
+    // WRAP ALL OF THIS BELOW IN A FUNCTION LATER
     // Filter data based on input value
     var inputValue = d3.select('#selDataset').property('value');
     var filteredMetadata = metadata.filter(individual => individual.id === parseInt(inputValue));
@@ -29,11 +30,24 @@ d3.json("static/data/samples.json").then((data) => {
         cell1.text(key);
         let cell2 = htmlRow.append('td');
         cell2.text(value);
-
-
         }); 
 
     // Generate horizontal bar chart
+    // Sort by OTU values and pull out top 10
+    // THIS CODE DOES NOT WORK - NEED TO REFORMAT DATA OR MODIFY APPROACH
+    var sortedsampleData = filteredsampleData.sort((a, b) => b.sample_values - a.sample_values);
+    var topTen = sortedsampleData.slice(0, 10).reverse();
+    console.log('all', sortedsampleData)
+    console.log('top ten', topTen)
+
+    // Reverse order for Plotly
+
+    // Create trace
+
+    // Create layout
+
+    // Generate plot
+
 
 
     // Generate bubble chart
