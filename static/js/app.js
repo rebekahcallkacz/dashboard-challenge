@@ -34,13 +34,24 @@ d3.json("static/data/samples.json").then((data) => {
 
     // Generate horizontal bar chart
     // Sort by OTU values and pull out top 10
-    // THIS CODE DOES NOT WORK - NEED TO REFORMAT DATA OR MODIFY APPROACH
-    var sortedsampleData = filteredsampleData.sort((a, b) => b.sample_values - a.sample_values);
-    var topTen = sortedsampleData.slice(0, 10).reverse();
-    console.log('all', sortedsampleData)
-    console.log('top ten', topTen)
+    // Reformat data of interest in order to sort it
+    var otuData = [];
+    var otuIds = filteredsampleData[0].otu_ids;
+    var otuLabels = filteredsampleData[0].otu_labels;
+    var sampleValues = filteredsampleData[0].sample_values;
 
-    // Reverse order for Plotly
+    for (let i = 0; i < otuIds.length; i++) {
+        var otuDatapoint = {};
+        otuDatapoint['id'] = otuIds[i];
+        otuDatapoint['label'] = otuLabels[i];
+        otuDatapoint['value'] = sampleValues[i];
+        otuData.push(otuDatapoint);
+    }
+
+    // Sort data, pull out top ten results and reverse order
+    var sortedotuData = otuData.sort((a, b) => b.value - a.value);
+    var topTen = sortedotuData.slice(0, 10).reverse();
+    console.log(topTen)
 
     // Create trace
 
