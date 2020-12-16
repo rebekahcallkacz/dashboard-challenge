@@ -11,7 +11,37 @@ d3.json("static/data/samples.json").then((data) => {
     sampleNames.forEach(name => {
         dropdownOptions.append('option').text(`${name}`).property('value', `${name}`);
     });
-    });
+
+    // Filter data based on input value
+    var inputValue = d3.select('#selDataset').property('value');
+    var filteredMetadata = metadata.filter(individual => individual.id === parseInt(inputValue));
+    var filteredsampleData = sampleData.filter(individual => individual.id === inputValue);
+
+    // Generate metadata table
+    Object.entries(filteredMetadata[0]).forEach(([key, value]) => {
+        let htmlRow = d3.select('tbody').append('tr');
+        let cell1 = htmlRow.append('td');
+        let words = key.split(' ');
+        for (let i = 0; i < words.length; i++) {
+            words[i] = words[i][0].toUpperCase() + words[i].substring(1);
+            }
+        key = words.join(' ');
+        cell1.text(key);
+        let cell2 = htmlRow.append('td');
+        cell2.text(value);
+
+
+        }); 
+
+    // Generate horizontal bar chart
+
+
+    // Generate bubble chart
+
+
+    // Generate gauge chart
+
+});
 
 function optionChanged(value) {
     console.log(value)
