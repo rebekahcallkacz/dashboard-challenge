@@ -1,11 +1,14 @@
+// Functions
+
+// This functions generates an html table using the metadata of the selected sample
 function generateTable(metadata) {
     // Select table in HTML
-    var tableHTML = d3.select('tbody');
+    let tableHTML = d3.select('tbody');
 
-    // Clear previous table
+    // Clear previous table 
     tableHTML.html('')
 
-    // Generate metadata table
+    // Generate metadata table (capitalize first letter of each word in table)
     Object.entries(metadata[0]).forEach(([key, value]) => {
         let htmlRow = tableHTML.append('tr');
         let cell1 = htmlRow.append('td');
@@ -21,32 +24,34 @@ function generateTable(metadata) {
 
 };
 
+// This function creates a bar chart of the top ten OTU's of the selected sample
 function barChart(input, data) {
         // Sort data by sample values
-        var newsortedotuData = data.sort((a, b) => b.sample_values - a.sample_values);
+        let sortedData = data.sort((a, b) => b.sample_values - a.sample_values);
         // Generate horizontal bar chart of top ten OTU's
-        // Create trace
-        var newtopTrace = {
-            y: newsortedotuData[0].otu_ids.slice(0, 10).reverse().map(otu => `OTU ${otu}`),
-            x: newsortedotuData[0].sample_values.slice(0, 10).reverse(),
-            text: newsortedotuData[0].otu_labels.slice(0, 10).reverse(),
+        // Create trace of only top ten OTU's
+        let topTrace = {
+            y: sortedData[0].otu_ids.slice(0, 10).reverse().map(otu => `OTU ${otu}`),
+            x: sortedData[0].sample_values.slice(0, 10).reverse(),
+            text: sortedData[0].otu_labels.slice(0, 10).reverse(),
             type: 'bar', 
             orientation: 'h'
         };
 
         // Create layout
-        var newtopLayout = {
+        let topLayout = {
             title: `Top Ten OTU's in Sample ${input}`,
             xaxis: { title: "Number of Samples Found"}
         };
 
         // Generate plot
-        Plotly.newPlot('bar', [newtopTrace], newtopLayout);
+        Plotly.newPlot('bar', [topTrace], topLayout);
 };
 
+// This function creates a bubble chart of all OTU's found in the selected sample
 function bubbleChart(input, data) {
     // Create trace
-    var bubbleTrace = {
+    let bubbleTrace = {
         y: data[0].sample_values,
         x: data[0].otu_ids,
         text: data[0].otu_labels,
@@ -58,7 +63,7 @@ function bubbleChart(input, data) {
         }
     };
     // Create layout
-    var layout = {
+    let layout = {
         title: `All OTUs in Sample ${input}`,
         showlegend: false,
         xaxis: { title: 'OTU ID' },
@@ -69,8 +74,9 @@ function bubbleChart(input, data) {
 
 }
 
+// This function creates a gauge that indicates the wash frequency of the selected sample
 function gaugeChart(data) {
-    var gaugeTrace = {
+    let gaugeTrace = {
         domain: { x: [0, 1], y: [0, 1] },
         value: data[0].wfreq,
         title: { text: "Wash Frequency" },
@@ -95,10 +101,12 @@ function gaugeChart(data) {
         }
       };
 
-    var gaugeLayout = {height: 500, width: 600};
+    let gaugeLayout = {height: 500, width: 600};
 
     Plotly.newPlot('gauge', [gaugeTrace], gaugeLayout);
 }
+
+// Initialize the dashboard and update as the user selects different samples
 // Import in the JSON sample data
 d3.json("static/data/samples.json").then((data) => {
     const sampleNames = data.names;
@@ -114,7 +122,6 @@ d3.json("static/data/samples.json").then((data) => {
         dropdownOptions.append('option').text(`${name}`).property('value', `${name}`);
     });
 
-    // WRAP ALL OF THIS BELOW IN A FUNCTION LATER
     // Filter data based on input value
     var inputValue = d3.select('#selDataset').property('value');
     var filteredMetadata = metadata.filter(individual => individual.id === parseInt(inputValue));
@@ -122,9 +129,6 @@ d3.json("static/data/samples.json").then((data) => {
 
     // Generate table using metadata
     generateTable(filteredMetadata);
-
-    // Sort data by sample values
-    var sortedotuData = filteredsampleData.sort((a, b) => b.sample_values - a.sample_values);
 
     // Generate horizontal bar chart of top ten OTU's
     barChart(inputValue, filteredsampleData)
@@ -134,9 +138,11 @@ d3.json("static/data/samples.json").then((data) => {
 
     // Generate gauge chart
     gaugeChart(filteredMetadata)
+    
     // Create event listener
     dropdownOptions.on('change', updateData)
 
+    // This function updates the data based on the user's selection
     function updateData() {
 
         // Filter data based on input value
