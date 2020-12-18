@@ -6,7 +6,7 @@ function generateTable(metadata) {
     let tableHTML = d3.select('tbody');
 
     // Clear previous table 
-    tableHTML.html('')
+    tableHTML.html('');
 
     // Generate metadata table (capitalize first letter of each word in table)
     Object.entries(metadata[0]).forEach(([key, value]) => {
@@ -75,10 +75,10 @@ function bubbleChart(input, data) {
 }
 
 // This function creates a gauge that indicates the wash frequency of the selected sample
-function gaugeChart(data) {
+function gaugeChart(metadata) {
     let gaugeTrace = {
         domain: { x: [0, 1], y: [0, 1] },
-        value: data[0].wfreq,
+        value: metadata[0].wfreq,
         title: { text: "Wash Frequency" },
         type: "indicator",
         mode: "gauge+number",
@@ -95,9 +95,7 @@ function gaugeChart(data) {
             { range: [6, 7], color: '#6FA8BC' },
             { range: [7, 8], color: '#57C4C6' },
             { range: [8, 9], color: '#40E0D0' },
-          ],
-          text: ['0-1', '1-2', '2-3', '3-4', '4-5', '5-6', '6-7', '7-8', '8-9', ''],
-          textposition: 'inside'
+          ]
         }
       };
 
@@ -131,16 +129,16 @@ d3.json("static/data/samples.json").then((data) => {
     generateTable(filteredMetadata);
 
     // Generate horizontal bar chart of top ten OTU's
-    barChart(inputValue, filteredsampleData)
+    barChart(inputValue, filteredsampleData);
 
     // Generate bubble chart
-    bubbleChart(inputValue, filteredsampleData)
+    bubbleChart(inputValue, filteredsampleData);
 
     // Generate gauge chart
-    gaugeChart(filteredMetadata)
+    gaugeChart(filteredMetadata);
     
     // Create event listener
-    dropdownOptions.on('change', updateData)
+    dropdownOptions.on('change', updateData);
 
     // This function updates the data based on the user's selection
     function updateData() {
@@ -160,7 +158,7 @@ d3.json("static/data/samples.json").then((data) => {
         bubbleChart(newinputValue, newfilteredsampleData);
 
         // Restyle gauge chart
-        Plotly.restyle('gauge', 'value', newfilteredMetadata[0].wfreq)
+        Plotly.restyle('gauge', 'value', newfilteredMetadata[0].wfreq);
 
     }
 
